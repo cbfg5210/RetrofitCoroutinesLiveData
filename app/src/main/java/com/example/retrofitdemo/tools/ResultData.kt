@@ -39,7 +39,6 @@ data class ResultData<T>(val requestStatus: RequestStatus,
                 error
             )
         }
-
     }
 }
 

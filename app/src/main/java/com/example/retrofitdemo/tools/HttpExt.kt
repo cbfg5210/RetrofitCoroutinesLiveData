@@ -73,7 +73,7 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
 
         // 加载数据库缓存
         action.mLoadCache?.invoke()?.let {
-            val cacheResult = Transformations.map<ResultType, ResultData<ResultType>>(it) { resultType ->
+            val cacheResult = Transformations.map(it) { resultType ->
                 ResultData.success(resultType, true)
             }
             emitSource(cacheResult)
@@ -85,16 +85,15 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
         val apiResponse = try {
             // 获取网络请求数据
             val resultBean = action.api?.invoke()
-            ApiResponse.create<ResponseType>(resultBean)
+            ApiResponse.create(resultBean)
         } catch (e: Throwable) {
-            ApiResponse.create<ResponseType>(e)
+            ApiResponse.create(e)
         }
 
         // 根据 ApiResponse 类型，处理对于事物
         val result = when (apiResponse) {
-            is ApiEmptyResponse -> {
-                null
-            }
+            is ApiEmptyResponse -> null
+
             is ApiSuccessResponse -> {
                 // 转换数据
                 val result = action.transformer?.invoke(apiResponse.body)
@@ -109,7 +108,7 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
                 }
 
                 result.apply {
-                    emit(ResultData.success<ResultType>(this, false))
+                    emit(ResultData.success(this, false))
                 }
             }
             is ApiErrorResponse -> {
@@ -118,6 +117,6 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
             }
         }
 
-        emit(ResultData.complete<ResultType>(result))
+        emit(ResultData.complete(result))
     }
 }
