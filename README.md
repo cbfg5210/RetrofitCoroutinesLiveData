@@ -1,7 +1,10 @@
 # RetrofitCoroutinesLiveData
 [![](https://jitpack.io/v/com.gitee.cbfg5210/RetrofitCoroutinesLiveData.svg)](https://jitpack.io/#com.gitee.cbfg5210/RetrofitCoroutinesLiveData)
 
-基于 [limuyang2/RetrofitLivedataDemo](https://github.com/limuyang2/RetrofitLivedataDemo) 进行了一些小修改
+本项目是在 [limuyang2/RetrofitLivedataDemo](https://github.com/limuyang2/RetrofitLivedataDemo) 的基础上做了些小修改，
+感谢 [limuyang2](https://github.com/limuyang2) 的开源分享!
+
+本项目是一个基于 Retrofit + Coroutines + LiveData 封装的网络框架。
 
 ### 引入依赖
 #### Step 1. Add the JitPack repository to your build file
@@ -39,7 +42,7 @@ dependencies {
 interface NewsApi {
     /**
      * 接口需要加上 [suspend] ！
-     * 返回值，直接就是你的数据类型，不需要再包装其他的东西了，超级简介
+     * 返回值，直接就是你的数据类型，不需要再包装其他的东西了，超级简洁
      */
     @GET("/getWangYiNews")
     suspend fun getNews(): NewsBean
