@@ -1,2 +1,3 @@
 rootProject.name='retrofitDemo'
+include ':http'
 include ':app'
