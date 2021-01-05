@@ -82,9 +82,9 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
 
         val apiResponse = try {
             // 获取网络请求数据
-            cbfg.http.ApiResponse.create(action.api())
+            ApiResponse.create(action.api())
         } catch (e: Throwable) {
-            cbfg.http.ApiResponse.create(e)
+            ApiResponse.create(e)
         }
 
         // 根据 ApiResponse 类型，处理对于事物
