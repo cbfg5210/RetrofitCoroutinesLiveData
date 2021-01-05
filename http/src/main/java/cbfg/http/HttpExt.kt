@@ -80,21 +80,12 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
         // 通知网络请求开始
         emit(ResultData.start<ResultType>())
 
-        val apiResponse = try {
+        try {
             // 获取网络请求数据
-            ApiResponse.create(action.api?.invoke())
-        } catch (e: Throwable) {
-            ApiResponse.create(e)
-        }
-
-        // 根据 ApiResponse 类型，处理对于事物
-        when (apiResponse) {
-            is ApiEmptyResponse -> {
-            }
-
-            is ApiSuccessResponse -> {
+            val response = action.api?.invoke()
+            if (response != null) {
                 // 转换数据
-                val result = action.transformer(apiResponse.body)
+                val result = action.transformer(response)
                 if (result != null) {
                     // 缓存数据到数据库
                     action.mSaveCache?.let {
@@ -105,8 +96,8 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
                 }
                 emit(ResultData.success(result, false))
             }
-
-            is ApiErrorResponse -> emit(ResultData.error<ResultType>(apiResponse.throwable))
+        } catch (e: Throwable) {
+            emit(ResultData.error<ResultType>(e))
         }
 
         emit(ResultData.complete<ResultType>())
