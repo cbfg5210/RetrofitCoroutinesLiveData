@@ -1,7 +1,9 @@
-package com.example.retrofitdemo.tools
+package com.example.retrofitdemo
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import cbfg.http.RequestStatus
+import cbfg.http.ResultData
 
 /**
  * @author 李沐阳

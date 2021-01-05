@@ -5,7 +5,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.retrofitdemo.databinding.ActivityMainBinding
-import com.example.retrofitdemo.tools.RequestStatus
+import cbfg.http.RequestStatus
 
 class MainActivity : AppCompatActivity() {
     // 利用系统扩展的代理，快速生成viewModel

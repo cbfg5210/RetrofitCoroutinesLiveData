@@ -1,7 +1,9 @@
 package com.example.retrofitdemo
 
 import androidx.lifecycle.*
-import com.example.retrofitdemo.tools.*
+import cbfg.http.ResultData
+import cbfg.http.getRetrofit
+import cbfg.http.simpleRequestLiveData
 
 /**
  * @author 李沐阳

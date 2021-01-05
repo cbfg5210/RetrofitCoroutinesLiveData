@@ -1,4 +1,4 @@
-package com.example.retrofitdemo.tools
+package cbfg.http
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
@@ -82,9 +82,9 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
 
         val apiResponse = try {
             // 获取网络请求数据
-            ApiResponse.create(action.api())
+            cbfg.http.ApiResponse.create(action.api())
         } catch (e: Throwable) {
-            ApiResponse.create(e)
+            cbfg.http.ApiResponse.create(e)
         }
 
         // 根据 ApiResponse 类型，处理对于事物

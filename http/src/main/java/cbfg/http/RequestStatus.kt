@@ -1,4 +1,4 @@
-package com.example.retrofitdemo.tools
+package cbfg.http
 
 enum class RequestStatus {
     START,

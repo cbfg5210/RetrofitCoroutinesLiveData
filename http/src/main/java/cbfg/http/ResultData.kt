@@ -1,5 +1,4 @@
-package com.example.retrofitdemo.tools
-
+package cbfg.http
 
 data class ResultData<T>(val requestStatus: RequestStatus,
                          val data: T?,
