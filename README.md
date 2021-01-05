@@ -26,16 +26,18 @@ dependencies {
 ### 使用
 #### Step 1. 初始化
 ```kotlin
- HttpManager.init { okHttpClientBuilder, retrofitBuilder ->
-    okHttpClientBuilder.connectTimeout(20, TimeUnit.SECONDS)
-        .readTimeout(20, TimeUnit.SECONDS)
-        ...
-        //.addInterceptor(ApiInterceptor) //如果需要对请求进行加解密的话加上
-
-    retrofitBuilder.baseUrl("https://api.apiopen.top")
-        .addConverterFactory(MoshiConverterFactory.create())
-        ...
- }
+  val okHttpClient = OkHttpClient.Builder()
+      .connectTimeout(10, TimeUnit.SECONDS)
+      .readTimeout(10, TimeUnit.SECONDS)
+      .build()
+  val retrofit = Retrofit.Builder()
+      .baseUrl("https://api.apiopen.top")
+      .client(okHttpClient)
+      .addConverterFactory(MoshiConverterFactory.create())
+      ...
+      //.addInterceptor(ApiInterceptor) //如果需要对请求进行加解密的话加上
+      .build()
+  HttpManager.init(okHttpClient, retrofit)
 ```
 #### Step 2. 定义请求 interface
 ```kotlin
