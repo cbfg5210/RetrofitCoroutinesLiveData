@@ -14,18 +14,17 @@ import kotlinx.coroutines.withContext
  */
 
 open class RequestAction<ResponseType, ResultType> {
-    var api: (suspend () -> ResponseType)? = null
+    lateinit var api: (suspend () -> ResponseType)
 
     // 加载数据库缓存
     var mLoadCache: (() -> LiveData<ResultType>)? = null
         private set
+
     var mSaveCache: ((ResultType) -> Unit)? = null
         private set
 
     @Suppress("UNCHECKED_CAST")
-    var transformer: ((ResponseType?) -> ResultType?)? = {
-        it as? ResultType
-    }
+    var transformer: ((ResponseType?) -> ResultType?) = { it as? ResultType }
         private set
 
     fun api(block: suspend () -> ResponseType) {
@@ -44,7 +43,6 @@ open class RequestAction<ResponseType, ResultType> {
     fun transformer(block: (ResponseType?) -> ResultType?) {
         this.transformer = block
     }
-
 }
 
 
@@ -69,8 +67,8 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
     dsl: RequestAction<ResponseType, ResultType>.() -> Unit
 ): LiveData<ResultData<ResultType>> {
     val action = RequestAction<ResponseType, ResultType>().apply(dsl)
-    return liveData(this.coroutineContext) {
 
+    return liveData(this.coroutineContext) {
         // 加载数据库缓存
         action.mLoadCache?.invoke()?.let {
             val cacheResult = Transformations.map(it) { resultType ->
@@ -84,8 +82,7 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
 
         val apiResponse = try {
             // 获取网络请求数据
-            val resultBean = action.api?.invoke()
-            ApiResponse.create(resultBean)
+            ApiResponse.create(action.api())
         } catch (e: Throwable) {
             ApiResponse.create(e)
         }
@@ -96,8 +93,7 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
 
             is ApiSuccessResponse -> {
                 // 转换数据
-                val result = action.transformer?.invoke(apiResponse.body)
-
+                val result = action.transformer(apiResponse.body)
                 if (result != null) {
                     // 缓存数据到数据库
                     action.mSaveCache?.let {
@@ -106,11 +102,10 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
                         }
                     }
                 }
-
-                result.apply {
-                    emit(ResultData.success(this, false))
-                }
+                emit(ResultData.success(result, false))
+                result
             }
+
             is ApiErrorResponse -> {
                 emit(ResultData.error<ResultType>(apiResponse.throwable))
                 null
