@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
  */
 
 open class RequestAction<ResponseType, ResultType> {
-    lateinit var api: (suspend () -> ResponseType)
+    var api: (suspend () -> ResponseType)? = null
 
     // 加载数据库缓存
     var mLoadCache: (() -> LiveData<ResultType>)? = null
@@ -82,14 +82,15 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
 
         val apiResponse = try {
             // 获取网络请求数据
-            ApiResponse.create(action.api())
+            ApiResponse.create(action.api?.invoke())
         } catch (e: Throwable) {
             ApiResponse.create(e)
         }
 
         // 根据 ApiResponse 类型，处理对于事物
-        val result = when (apiResponse) {
-            is ApiEmptyResponse -> null
+        when (apiResponse) {
+            is ApiEmptyResponse -> {
+            }
 
             is ApiSuccessResponse -> {
                 // 转换数据
@@ -103,15 +104,11 @@ inline fun <ResponseType, ResultType> CoroutineScope.requestLiveData(
                     }
                 }
                 emit(ResultData.success(result, false))
-                result
             }
 
-            is ApiErrorResponse -> {
-                emit(ResultData.error<ResultType>(apiResponse.throwable))
-                null
-            }
+            is ApiErrorResponse -> emit(ResultData.error<ResultType>(apiResponse.throwable))
         }
 
-        emit(ResultData.complete(result))
+        emit(ResultData.complete<ResultType>())
     }
 }
