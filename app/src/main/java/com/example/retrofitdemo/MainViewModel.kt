@@ -1,8 +1,11 @@
 package com.example.retrofitdemo
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import cbfg.http.HttpManager
 import cbfg.http.ResultData
-import cbfg.http.getRetrofit
 import cbfg.http.simpleRequestLiveData
 
 /**
@@ -12,7 +15,7 @@ import cbfg.http.simpleRequestLiveData
  */
 class MainViewModel : ViewModel() {
 
-    private val newsApi = getRetrofit().create(NewsApi::class.java)
+    private val newsApi = HttpManager.retrofit.create(NewsApi::class.java)
 
     private val _newsLiveData = MediatorLiveData<ResultData<NewsBean>>()
 
